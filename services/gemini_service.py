@@ -54,7 +54,7 @@ def search_relevant_memory(query: str, top_k=3) -> list[str]:
 
 def get_gemini_response(messages: list[tuple[str, str]]) -> str:
     try:
-        recent_messages = messages[-3:] 
+        recent_messages = messages[-6:] 
         last_user_msg = [m[1] for m in reversed(messages) if m[0] == "user"]
         query = last_user_msg[0] if last_user_msg else ""
 
