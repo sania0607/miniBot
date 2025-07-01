@@ -2,7 +2,9 @@ import google.generativeai as genai
 import os
 from dotenv import load_dotenv
 import chromadb
-
+from chromadb.config import Settings
+from chromadb import Client
+import uuid  
 
 load_dotenv()
 api_key = os.getenv("GEMINI_API_KEY")
@@ -14,7 +16,7 @@ genai.configure(api_key=api_key)
 
 model = genai.GenerativeModel("gemini-2.5-flash")
 
-chroma_client = chromadb.Client(settings=chromadb.config.Settings(allow_reset=True, anonymized_telemetry=False))
+chroma_client = Client(Settings(allow_reset=True, anonymized_telemetry=False))
 memory_store = chroma_client.create_collection("mini_bot_memory")
 
 def summarize_chunk(chunk: list[tuple[str, str]]) -> str:
@@ -37,8 +39,6 @@ def embed_and_store_summary(summary: str, uid: str):
     except Exception as e:
         print(f"❌ Error embedding/storing: {e}")
 
-
-
 def search_relevant_memory(query: str, top_k=3) -> list[str]:
     try:
         query_embedding = genai.embed_content(
@@ -51,7 +51,6 @@ def search_relevant_memory(query: str, top_k=3) -> list[str]:
     except Exception as e:
         print(f"❌ Error during memory retrieval: {e}")
         return []
-
 
 def get_gemini_response(messages: list[tuple[str, str]]) -> str:
     try:
@@ -69,6 +68,13 @@ def get_gemini_response(messages: list[tuple[str, str]]) -> str:
             formatted_messages.append({"role": role, "parts": [content]})
 
         response = model.generate_content(formatted_messages)
-        return response.text
+        answer = response.text
+
+        full_chunk = recent_messages + [("model", answer)]
+        summary = summarize_chunk(full_chunk)
+        uid = str(uuid.uuid4())  
+        embed_and_store_summary(summary, uid)
+
+        return answer
     except Exception as e:
         return f"❌ Error: {e}"
