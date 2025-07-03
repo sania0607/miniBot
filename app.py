@@ -28,4 +28,4 @@ if user_input:
     st.rerun()
 else:
     for role, msg in st.session_state.messages:
-        render_chat_bubble(role, msg)
+        render_chat_bubble(role,msg)
