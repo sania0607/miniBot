@@ -17,7 +17,7 @@ genai.configure(api_key=api_key)
 model = genai.GenerativeModel("gemini-2.5-flash")
 
 chroma_client = Client(Settings(allow_reset=True, anonymized_telemetry=False))
-memory_store = chroma_client.create_collection("mini_bot_memory")
+memory_store =  chroma_client.get_or_create_collection("mini_bot_memory")
 
 def summarize_chunk(chunk: list[tuple[str, str]]) -> str:
     formatted = "\n".join([f"{role}: {msg}" for role, msg in chunk])

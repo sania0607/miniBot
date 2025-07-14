@@ -1,3 +1,8 @@
 streamlit
 google-generativeai
 chromadb
+gtts
+pydub
+SpeechRecognition
+streamlit-webrtc
+python-dotenv
