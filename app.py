@@ -1,4 +1,15 @@
-# ... (previous imports remain the same)
+import streamlit as st
+from gtts import gTTS
+from pydub import AudioSegment
+from pydub.playback import play
+import speech_recognition as sr
+import tempfile
+import os
+
+from services.gemini_service import get_gemini_response
+from components.chat_ui import render_chat_bubble, inject_css
+
+
 
 st.set_page_config(page_title="Mini Bot", layout="centered")
 inject_css()
