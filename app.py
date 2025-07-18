@@ -24,30 +24,6 @@ if "messages" not in st.session_state:
 if len(st.session_state.messages) == 0:
     render_chat_bubble("ai", "🌸 Hi! I'm Mini Bot. You can talk or type. I'm listening!")
 
-# Voice input section
-col1, col2 = st.columns([1, 3])
-with col1:
-    if st.button("🎤 Hold to Speak", key="voice_button"):
-        with st.spinner("Listening..."):
-            r = sr.Recognizer()
-            with sr.Microphone() as source:
-                try:
-                    audio = r.listen(source, timeout=5, phrase_time_limit=7)
-                    user_input = r.recognize_google(audio)
-                    st.session_state.messages.append(("user", user_input))
-                    st.rerun()
-                except sr.WaitTimeoutError:
-                    st.error("⏱️ Timeout! Try again.")
-                except Exception as e:
-                    st.error(f"Error: {str(e)}")
-
-# Text input
-with col2:
-    user_input = st.chat_input("Or type your message here...")
-
-# Handle text input
-if user_input:
-    st.session_state.messages.append(("user", user_input))
 
 # Process the latest message
 if st.session_state.messages and st.session_state.messages[-1][0] == "user":
@@ -71,6 +47,32 @@ if st.session_state.messages and st.session_state.messages[-1][0] == "user":
 for i, (role, msg) in enumerate(st.session_state.messages):
     audio_path = st.session_state.audio_files.get(i)
     render_chat_bubble(role, msg, audio_path)
+
+# Voice input section
+col1, col2 = st.columns([1, 3])
+with col1:
+    if st.button("🎤 Hold to Speak", key="voice_button"):
+        with st.spinner("Listening..."):
+            r = sr.Recognizer()
+            with sr.Microphone() as source:
+                try:
+                    audio = r.listen(source, timeout=5, phrase_time_limit=7)
+                    user_input = r.recognize_google(audio)
+                    st.session_state.messages.append(("user", user_input))
+                    st.rerun()
+                except sr.WaitTimeoutError:
+                    st.error("⏱️ Timeout! Try again.")
+                except Exception as e:
+                    st.error(f"Error: {str(e)}")
+
+ #Text input
+with col2:
+    user_input = st.chat_input("Or type your message here...")
+    
+# Handle text input
+if user_input:
+    st.session_state.messages.append(("user", user_input))
+    st.rerun()
 
 # Auto-play the latest audio
 if st.session_state.messages and st.session_state.messages[-1][0] == "model":

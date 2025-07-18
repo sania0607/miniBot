@@ -1,76 +1,83 @@
-# 🤖 Mini Bot – Built with Streamlit & Google Gemini API
+# 🌟 Mini Bot - Voice Assistant
 
-Welcome to **Mini Bot**, a general-purpose conversational assistant built using Google's Gemini 2.5 model and Streamlit! This chatbot takes user input as text and returns intelligent, meaningful responses in real-time.
-
----
-
-## 🧠 What This Project Does
-
-- Accepts text input from users via a chat interface  
-- Sends input to the **Gemini 2.5 API**  
-- Displays the AI-generated response in a clean, chat-style layout  
-- Renders messages in a role-based layout (left/right), mimicking real conversation  
-- Built with a focus on UX/UI and real-world API usage
+Mini Bot is a Streamlit-powered chatbot that supports both text and voice input. It uses Google's Gemini API for intelligent responses and can read replies aloud using text-to-speech.
 
 ---
 
-## 🛠️ Tech Stack
+## Features
 
-| Layer    | Tool / Library                             |
-|----------|--------------------------------------------|
-| Frontend | `Streamlit`                                |
-| Backend  | `Python`                                   |
-| AI Model | `Gemini 2.5 (via Google Generative AI SDK)`|
-| Styling  | Custom HTML/CSS injected into Streamlit    |
-| Database | `ChromaDB`                                 |
+- **Conversational AI** powered by Gemini
+- **Voice input** (speech-to-text)
+- **Text input** (chat box)
+- **Voice output** (text-to-speech playback)
+- **Chat history** with audio playback for bot responses
 
 ---
 
-## 🚀 How to Run the Bot
+## Installation
 
-### 🧩 1. Install Dependencies
+1. **Clone the repository:**
+   ```
+   git clone <your-repo-url>
+   cd Mini-bot
+   ```
 
-Install the required Python libraries using `pip`:
+2. **Install dependencies:**
+   ```
+   pip install -r requirements.txt
+   ```
+   Or manually:
+   ```
+   pip install streamlit gtts pydub speechrecognition python-dotenv google-generativeai chromadb
+   ```
 
-```bash
-pip install streamlit google-generativeai chromadb
-```
-
-Or use the requirements.txt:
-
-```bash
-pip install -r requirements.txt
-```
-
-### ▶️ 2. Run the App
-
-```bash
-streamlit run app.py
-```
-
-Make sure your Gemini API key is properly set before running the app.
-
----
-
-## 📂 Project Structure
-
-Mini-Bot/  
-├── app.py               # Main Streamlit app  
-├── chat_ui.py           # UI layout and chat logic  
-├── requirements.txt     # All required Python packages  
-├── README.md            # Project documentation
+3. **Set up your Gemini API key:**
+   - Create a `.env` file in the project root:
+     ```
+     GEMINI_API_KEY=your_gemini_api_key_here
+     ```
 
 ---
 
-## ✨ Features to Add (Future Scope)
+## Usage
 
-- Voice input/output integration  
-- Persistent chat history using ChromaDB  
-- Theme toggle (dark/light mode)  
-- API key protection using environment variables  
-- Custom system prompts/personas  
-- Better error handling and loading states
+1. **Run the app:**
+   ```
+   streamlit run app.py
+   ```
+
+2. **Interact:**
+   - Type your message in the chat box at the bottom.
+   - Or click "Hold to Speak" to use your microphone.
+   - Bot replies will appear as chat bubbles and can be played as audio.
 
 ---
+
+## File Structure
+
+- `app.py` — Main Streamlit app
+- `services/gemini_service.py` — Handles Gemini API calls and memory
+- `components/chat_ui.py` — Chat bubble rendering and custom CSS
+- `.env` — Your Gemini API key
+
+---
+
+## Notes
+
+- Make sure your microphone is enabled for voice input.
+- The input controls are fixed at the bottom for easy access.
+- Requires Python 3.8+.
+
+---
+
+
+## Credits
+
+- [Streamlit](https://streamlit.io/)
+- [Google Gemini](https://ai.google.com/)
+- [gTTS](https://pypi.org/project/gTTS/)
+- [pydub](https://pypi.org/project/pydub/)
+
+
 
 

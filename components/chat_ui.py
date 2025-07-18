@@ -1,6 +1,6 @@
 import streamlit as st
 
-def render_chat_bubble(role: str, msg: str):
+def render_chat_bubble(role: str, msg: str, audio_path: str = None):
     bubble_class = "user" if role == "user" else "ai"
     label = "You" if role == "user" else "Mini Bot"
     st.markdown(f"""
@@ -39,5 +39,17 @@ def inject_css():
                 color: #000000;
                 text-align: left;
             }
+            .fixed-input-bar {
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        width: 100vw;
+        background: #181920;
+        padding: 1.5rem 0 1.5rem 0;
+        z-index: 100;
+    }
+    .chat-area {
+        padding-bottom: 120px; /* Height of input bar */
+    }
         </style>
     """, unsafe_allow_html=True)
