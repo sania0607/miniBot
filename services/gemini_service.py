@@ -16,10 +16,12 @@ genai.configure(api_key=api_key)
 
 model = genai.GenerativeModel("gemini-2.5-flash")
 
+# Initialize ChromaDB client and collection for memory storage
 chroma_client = Client(Settings(allow_reset=True, anonymized_telemetry=False))
-memory_store =  chroma_client.get_or_create_collection("mini_bot_memory")
+memory_store = chroma_client.get_or_create_collection("mini_bot_memory")
 
 def summarize_chunk(chunk: list[tuple[str, str]]) -> str:
+    """Summarizes a chunk of conversation for memory compression."""
     formatted = "\n".join([f"{role}: {msg}" for role, msg in chunk])
     summary_prompt = f"Summarize this conversation:\n\n{formatted}"
     try:
@@ -29,6 +31,7 @@ def summarize_chunk(chunk: list[tuple[str, str]]) -> str:
         return f"❌ Error while summarizing: {e}"
 
 def embed_and_store_summary(summary: str, uid: str):
+    """Embeds the summary and stores it in ChromaDB."""
     try:
         embedding = genai.embed_content(
             model="models/embedding-001",
@@ -37,9 +40,10 @@ def embed_and_store_summary(summary: str, uid: str):
         )["embedding"]
         memory_store.add(documents=[summary], embeddings=[embedding], ids=[uid])
     except Exception as e:
-        print(f"❌ Error embedding/storing: {e}")
+        print(f"❌ Error embedding/storing summary: {e}")
 
 def search_relevant_memory(query: str, top_k=3) -> list[str]:
+    """Searches ChromaDB for top relevant memory summaries based on query."""
     try:
         query_embedding = genai.embed_content(
             model="models/embedding-001",
@@ -47,6 +51,7 @@ def search_relevant_memory(query: str, top_k=3) -> list[str]:
             task_type="semantic_similarity"
         )["embedding"]
         results = memory_store.query(query_embeddings=[query_embedding], n_results=top_k)
+        # Return list of documents (summaries), empty list if none found
         return results["documents"][0] if results["documents"] else []
     except Exception as e:
         print(f"❌ Error during memory retrieval: {e}")
@@ -54,7 +59,7 @@ def search_relevant_memory(query: str, top_k=3) -> list[str]:
 
 def get_gemini_response(messages: list[tuple[str, str]]) -> str:
     try:
-        recent_messages = messages[-6:] 
+        recent_messages = messages[-6:]  
         last_user_msg = [m[1] for m in reversed(messages) if m[0] == "user"]
         query = last_user_msg[0] if last_user_msg else ""
 
@@ -63,9 +68,13 @@ def get_gemini_response(messages: list[tuple[str, str]]) -> str:
 
         formatted_messages = []
         for i, (role, content) in enumerate(recent_messages):
+            # Map roles: 'user' stays 'user', 'ai' becomes 'model'
+            gemini_role = "model" if role == "ai" else role
+
             if i == len(recent_messages) - 1 and role == "user" and memory_context:
                 content = memory_context + "\n\n" + content
-            formatted_messages.append({"role": role, "parts": [content]})
+
+            formatted_messages.append({"role": gemini_role, "parts": [content]})
 
         response = model.generate_content(formatted_messages)
         answer = response.text
@@ -76,5 +85,6 @@ def get_gemini_response(messages: list[tuple[str, str]]) -> str:
         embed_and_store_summary(summary, uid)
 
         return answer
+
     except Exception as e:
         return f"❌ Error: {e}"

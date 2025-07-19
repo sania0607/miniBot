@@ -3,6 +3,7 @@ import streamlit as st
 def render_chat_bubble(role: str, msg: str, audio_path: str = None):
     bubble_class = "user" if role == "user" else "ai"
     label = "You" if role == "user" else "Mini Bot"
+
     st.markdown(f"""
     <div class="chat-container">
         <div class="chat-bubble {bubble_class}">
@@ -10,6 +11,10 @@ def render_chat_bubble(role: str, msg: str, audio_path: str = None):
         </div>
     </div>
     """, unsafe_allow_html=True)
+
+    # Play audio only for bot messages with audio_path
+    if role != "user" and audio_path:
+        st.audio(audio_path)
 
 def inject_css():
     st.markdown("""
